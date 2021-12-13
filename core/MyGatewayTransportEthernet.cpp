@@ -172,20 +172,17 @@ bool gatewayTransportInit(void)
 
 #if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32)
 	// Turn off access point
-	WiFi.mode(WIFI_STA);
+	WiFi.mode(WIFI_AP);
+//	WiFi.mode(WIFI_STA);
 #if defined(MY_GATEWAY_ESP8266)
 	WiFi.hostname(MY_HOSTNAME);
 #elif defined(MY_GATEWAY_ESP32)
 	WiFi.setHostname(MY_HOSTNAME);
 #endif
 #ifdef MY_IP_ADDRESS
-	WiFi.config(_ethernetGatewayIP, _gatewayIp, _subnetIp);
+	WiFi.softAPConfig(_ethernetGatewayIP, _gatewayIp, _subnetIp);
 #endif
-	(void)WiFi.begin(MY_WIFI_SSID, MY_WIFI_PASSWORD, 0, MY_WIFI_BSSID);
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(1000);
-		GATEWAY_DEBUG(PSTR("GWT:TIN:CONNECTING...\n"));
-	}
+	WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str());
 	GATEWAY_DEBUG(PSTR("GWT:TIN:IP: %s\n"), WiFi.localIP().toString().c_str());
 #elif defined(MY_GATEWAY_LINUX)
 	// Nothing to do here
